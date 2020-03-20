@@ -1,0 +1,10 @@
+#!/bin/sh
+
+FILE=PSPackageCreator.ps1
+
+if test -f "$FILE"; then
+	echo "Powershell script exists to build the database scripts.  I will run it for you..."
+	C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -ExecutionPolicy RemoteSigned -Command '.\PSPackageCreator.ps1'
+else
+	echo "Powershell script does not exist.  I shall assume this is not a database project"
+fi

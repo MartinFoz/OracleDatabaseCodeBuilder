@@ -1,0 +1,31 @@
+pool:
+  name: Azure Pipelines
+  vmImage: windows-latest
+variables:
+  ScriptBuilder.ScriptFolderName: ''
+  environmnet.isazure: 'true'
+trigger:
+  branches:
+    exclude: 
+    - '*-dev*'
+    - 'master'
+
+steps:
+- task: PowerShell@2
+  displayName: 'PowerShell - Build The folder structure and copy files'
+  name: 'ScriptBuilder'
+  inputs:
+    filepath: 'PSPackageCreator.ps1'
+
+- task: ArchiveFiles@2
+  displayName: 'Zip the files'
+  inputs:
+    rootFolderOrFile: '$(Build.STAGINGDIRECTORY)/$(ScriptBuilder.ScriptFolderName)'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(ScriptBuilder.ScriptFolderName)_$(Build.BuildId).zip'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: DatabaseScripts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(ScriptBuilder.ScriptFolderName)_$(Build.BuildId).zip'
+    ArtifactName: DatabaseScripts
+
