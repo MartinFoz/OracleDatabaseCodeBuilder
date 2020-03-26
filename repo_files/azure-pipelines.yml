@@ -8,6 +8,8 @@ trigger:
   branches:
     exclude: 
     - '*-dev*'
+    - 'dev/*'
+    - 'development/*'
     - 'master'
 
 steps:

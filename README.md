@@ -35,21 +35,27 @@ The following file structure needs to be adhered to so that the process works wi
 
 # Branch & Project Folder Names
 
-For the script to locate the correct folder and scripts, the branch and folder names need to be similar.  The branching strategy that we use in our team means that we have 2 branches for a project / bug fix.  The naming convention we use and how the PowerShell script is configured to run is
-```
-{Project ref / bug ref}-{dev/development/master}
-```
-A `-master` branch is the master for the project and where pull requests are actions and releases created.  In the Azure Pipeline, the build only happens once the pull request has been complete.
+For the script to locate the correct folder and scripts, the branch and folder names need to be similar.  The branching strategy that we use in our team means that we have 2 branches for a project / bug fix.  The PowerShell script is able to handle 2 naming conventions depending on what you want to do.
 
-A `-dev` or `-development` branch is the branch you push your changes to while developing.  If you have the git hook set up, the PowerShell script will run when you commit and cancel the commit if there are any errors
+Convention 1 : `{Project ref / bug ref}-{dev/development/master}`
 
-So the script can automatically find the project folder you are working on, it takes the branch name and removes any `-master`,`-dev` or `-development` suffixes and looks for a folder with that name in the `scripts` directory
+This is the original way and allows you (in Azure DevOps) to apply your own branch policies to the project `master` branch.  
+
+Convention 2 : `{release/dev/development}/{Project ref / bug ref}`
+
+This additional way allows for Cross-repo Policies to be applied on Azure DevOps so you don't have to worry about it.  This way will also group your `release` and `development` repos into folders
+
+A `master / release` branch is the master for the project and where pull requests are actions and releases created.  In the Azure Pipeline, the build only happens once the pull request has been complete.
+
+A `dev` or `development` branch is the branch you push your changes to while developing.  If you have the git hook set up, the PowerShell script will run when you commit and cancel the commit if there are any errors
+
+So the script can automatically find the project folder you are working on, it takes the branch name and removes any `master/release`,`dev` or `development` suffixes and looks for a folder with that name in the `scripts` directory
 
 If you don't want to build, add a NoLocalBuild.txt file to the root of your folder. The PowerShell script will pick this up and not check your install or backout scripts. This file is part of the .gitignore file list so won't be stored on the server so if you clone the project again, you will need to reinstate it.
 
 # When you are developing
 
-The main goal of this work-around is to ensure that the database object files that you are editing remain in the same place so that when it comes to `push` then `pull` into the `*-master` branch, there is no chance of a file being missed because it wasn't manually copied back to the schema location.
+The main goal of this work-around is to ensure that the database object files that you are editing remain in the same place so that when it comes to `push` then `pull` into the `master/release` branch, there is no chance of a file being missed because it wasn't manually copied back to the schema location.
 
 When you are changing or even adding a new database object, you will need to edit them in the schema location.  When the PowerShell script runs, it will copy the required file from the schema location to a folder it creates in your project folder called `objects`.
 
