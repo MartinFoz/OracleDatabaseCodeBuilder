@@ -8,6 +8,7 @@
 ## 21-JAN-2020  Updated error message that can appear when branching
 ## 27-Jan-2020  Added check that character casing is the same and
 ##              cleaned up the formatting of the error messages
+## 24/03/2020   Added update to check for dev*/* & release/* folders
 ###################################################################################
 
 
@@ -134,8 +135,7 @@ function GetInstallFolder
         {
             Write-Host " "
             Write-Host "#######################################################################" -ForegroundColor Red
-            Write-Host "ERROR - Cannot determine the folder to use for the build. Please ensure" -ForegroundColor Red 
-            Write-Host "that you have followed the correct conventions" -ForegroundColor Red
+            Write-Host "ERROR - Cannot determine the folder to use for the build. Please ensure that you have followed the correct conventions" -ForegroundColor Red
             Write-Host "#######################################################################" -ForegroundColor Red
             Write-Host " "
             exit 1
@@ -233,6 +233,9 @@ $branch_name = GetBranchName
 $folder_name = $branch_name -replace "-master$", "" 
 $folder_name = $folder_name -replace "-dev$", ""
 $folder_name = $folder_name -replace "-development$", ""
+$folder_name = $folder_name -replace "release/", ""
+$folder_name = $folder_name -replace "dev/", ""
+$folder_name = $folder_name -replace "development/", ""
 
 if ($isAzureBuild -eq $true)
 {
